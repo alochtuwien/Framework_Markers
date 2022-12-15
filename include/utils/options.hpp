@@ -15,34 +15,45 @@ namespace po = boost::program_options;
 namespace Utils::Options {
     class CameraSetup {
     public:
-        CameraSetup();
-
-    public:
-        bool is_recording;
+        bool is_recording = false;
         std::string file_path;
+        std::string config_file_path;
+        std::string biases_file;
+        bool is_using_triggers = false;
+        int triggers_channel;
 
         //Calibrations
         Eigen::Matrix3f camera_matrix_eigen;
         cv::Mat camera_matrix_cv;
         cv::Mat dist_coeffs; // Distortion vector
+    };
 
-
+    class MarkersSetup {
+    public:
+        std::vector<uint> ids;
+        std::vector<std::vector<cv::Point3f>> coordinates;
+        std::vector<std::vector<float>> frequencies;
     };
 
     class Setup {
     public:
         CameraSetup cam_config;
+        MarkersSetup marker_config;
 
-        const CameraSetup &getCamConfig() const;
+        MarkersSetup &getMarkerConfig();
 
-        void setCamConfig(const CameraSetup &camConfig);
+        void setMarkerConfig(MarkersSetup &markerConfig);
+
+        CameraSetup &getCamConfig();
+
+        void setCamConfig(CameraSetup &camConfig);
     };
 
     class Parser {
     public:
         explicit Parser(int argc, char** argv);
-        po::options_description *general_opt;
         Setup current_setup;
+
     };
 
 }

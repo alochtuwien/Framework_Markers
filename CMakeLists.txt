@@ -14,13 +14,19 @@ include_directories(${EIGEN3_INCLUDE_DIR})
 find_package(yaml-cpp REQUIRED)
 include_directories(${YAML_CPP_INCLUDE_DIRS})
 
+find_package(MetavisionSDK COMPONENTS core driver REQUIRED)
 
-add_executable(active_markers main.cpp utils/options.cpp utils/options.hpp)
+
+
+add_executable(active_markers main.cpp src/utils/options.cpp include/utils/options.hpp src/camera.cpp include/camera.hpp)
 
 target_include_directories(active_markers PRIVATE ${Boost_INCLUDE_DIR})
 target_link_libraries( active_markers
-                        ${Boost_LIBRARIES}
                         ${OpenCV_LIBS}
-                        yaml-cpp)
+                        yaml-cpp
+                        MetavisionSDK::core
+                        MetavisionSDK::driver
+                        Boost::program_options
+                         )
 
 
