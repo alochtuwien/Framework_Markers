@@ -15,10 +15,14 @@ int main(int argc, char *argv[]) {
         std::cout << "Using camera config from: " << parser.current_setup.cam_config.config_file_path << std::endl;
     }
 
-    Camera(&parser.current_setup.getCamConfig());
+    Camera cam(&parser.current_setup.getCamConfig());
+    cam.initialize_camera();
+    cam.start();
 
+    while (true)
+    {
 
-
+    }
 
 
     return 0;

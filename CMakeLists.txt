@@ -18,7 +18,7 @@ find_package(MetavisionSDK COMPONENTS core driver REQUIRED)
 
 
 
-add_executable(active_markers main.cpp src/utils/options.cpp include/utils/options.hpp src/camera.cpp include/camera.hpp)
+add_executable(active_markers main.cpp src/utils/options.cpp include/utils/options.hpp src/camera.cpp include/camera.hpp src/event_reader.cpp include/event_reader.hpp include/utils/types.hpp)
 
 target_include_directories(active_markers PRIVATE ${Boost_INCLUDE_DIR})
 target_link_libraries( active_markers
