@@ -9,15 +9,18 @@
 #include <metavision/sdk/driver/camera.h>
 #include <metavision/hal/facilities/i_trigger_in.h>
 #include "event_reader.hpp"
-
+#include "utils/buffers.hpp"
 class Camera {
 public:
     Camera(Utils::Options::CameraSetup *setup);
     int width;
     int height;
 
+    EventBufferReader reader;
+
     void initialize_camera();
     void start() {camera_object.start();};
+
 private:
     Metavision::Camera camera_object;
     Metavision::Biases *biases;
@@ -28,8 +31,8 @@ private:
     cv::Mat camera_matrix_cv;
     cv::Mat dist_coeffs;
 
-    EventBufferReader reader;
-    Queue *getOutputBuffer() {return reader.getOutputBuffer();};
+
+
 };
 
 

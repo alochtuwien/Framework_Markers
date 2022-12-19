@@ -5,7 +5,7 @@
 #include "../include/event_reader.hpp"
 
 EventBufferReader::EventBufferReader(){
-    output_buffer  = new Queue(1024);
+
 }
 
 void EventBufferReader::readEvents(const Metavision::Event2d *ev_begin, const Metavision::Event2d *ev_end) {
@@ -20,6 +20,5 @@ void EventBufferReader::readEvents(const Metavision::Event2d *ev_begin, const Me
     EventBatch output_pair;
     output_pair.first = input_pointers_vector;
     output_pair.second = input_evt_vector;
-    output_buffer->enqueue(output_pair);
-    std::cout << "From: " << ev_begin->t << " to: " << ev_end->t << std::endl;
+    buffers.sendBatch(output_pair);
 }

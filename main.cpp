@@ -2,6 +2,7 @@
 
 #include "include/utils/options.hpp"
 #include "include/camera.hpp"
+#include "include/utils/visualization.hpp"
 int main(int argc, char *argv[]) {
 
     //Parse options
@@ -17,7 +18,16 @@ int main(int argc, char *argv[]) {
 
     Camera cam(&parser.current_setup.getCamConfig());
     cam.initialize_camera();
+
+    std::cout << cam.width << " " << cam.height << std::endl;
+
+    VisualizationController vis(cam.width, cam.height);
+    vis.buffers.setInputBuffer(cam.reader.buffers.getOutputBuffer());
+
     cam.start();
+    vis.start();
+
+
 
     while (true)
     {
