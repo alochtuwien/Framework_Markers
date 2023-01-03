@@ -18,7 +18,8 @@ VisualizationController::VisualizationController(int width_new, int height_new) 
     while(true){
 
         buffers.getBatch();
-        if(i%10 == 0) {
+        if(i%3 == 0) {
+            prod->reset_state();
             prod->registerBatch(&buffers.current_batch);
             auto out = prod->getOutput();
             ui_ptr->show_async(out);
@@ -49,9 +50,8 @@ void VisualizationProducer::reset_state(){
 }
 
 void VisualizationProducer::registerBatch(EventBatch *batch) {
-    std::cout << batch->first->back()->t << std::endl;
     for (const Metavision::Event2d* ev : *batch->first){
-        img.at<uint8_t>(ev->y, ev->x) = ev->p*255;
+        img.at<uint8_t>(ev->y, ev->x) = 255;
     }
 }
 

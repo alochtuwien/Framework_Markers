@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
     Camera cam(&parser.current_setup.getCamConfig());
     cam.initialize_camera();
 
-    std::cout << cam.width << " " << cam.height << std::endl;
+
 
     VisualizationController vis(cam.width, cam.height);
     vis.buffers.setInputBuffer(cam.reader.buffers.getOutputBuffer());

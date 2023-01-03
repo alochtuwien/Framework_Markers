@@ -29,7 +29,7 @@ add_executable(active_markers main.cpp
         src/utils/visualization.cpp
         include/utils/visualization.hpp
         src/utils/buffers.cpp
-        include/utils/buffers.hpp)
+        include/utils/buffers.hpp src/markers.cpp include/markers.hpp)
 
 target_include_directories(active_markers PRIVATE ${Boost_INCLUDE_DIR})
 target_link_libraries( active_markers
