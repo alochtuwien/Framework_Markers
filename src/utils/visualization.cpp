@@ -10,7 +10,6 @@ VisualizationController::VisualizationController(int width_new, int height_new) 
 
     ui_ptr = new Metavision::MTWindow("Active markers", width, height, Metavision::Window::RenderMode::BGR);
     prod = new VisualizationProducer(width, height);
-//    prod = new_producer;
 }
 
 [[noreturn]] void VisualizationController::runtimeLoop() {

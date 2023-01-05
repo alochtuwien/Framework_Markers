@@ -57,3 +57,7 @@ void Model3D::transform()
     }
     max_projected_distance_ *= 1.2;
 }
+
+MarkersManager::MarkersManager(Utils::Options::MarkersSetup setup) {
+    config = setup;
+};

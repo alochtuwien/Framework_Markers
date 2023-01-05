@@ -10,6 +10,7 @@
 
 #include <metavision/sdk/base/events/event_cd.h>
 
+#include "utils/options.hpp"
 
 class Model3D {
 public:
@@ -57,8 +58,11 @@ private:
 
 class MarkersManager{
 public:
-    MarkersManager();
+    MarkersManager(Utils::Options::MarkersSetup setup);
 private:
+    Utils::Options::MarkersSetup config;
+
+
 };
 
 

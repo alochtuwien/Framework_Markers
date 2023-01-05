@@ -3,6 +3,8 @@
 #include "include/utils/options.hpp"
 #include "include/camera.hpp"
 #include "include/utils/visualization.hpp"
+#include "include/markers.hpp"
+
 int main(int argc, char *argv[]) {
 
     //Parse options
@@ -19,7 +21,7 @@ int main(int argc, char *argv[]) {
     Camera cam(&parser.current_setup.getCamConfig());
     cam.initialize_camera();
 
-
+    MarkersManager markers(parser.current_setup.getMarkerConfig());
 
     VisualizationController vis(cam.width, cam.height);
     vis.buffers.setInputBuffer(cam.reader.buffers.getOutputBuffer());
