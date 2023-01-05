@@ -5,12 +5,14 @@
 #include "../../include/utils/buffers.hpp"
 
 Queue* Buffers::getOutputBuffer() {
-    output_buffers.push_back(Queue(QUEUE_SIZE));
+    Queue *tmp = new Queue(1024);
+    output_buffers.push_back(tmp);
 
-    return &output_buffers.back();
+    return tmp;
 }
 
 void Buffers::getBatch() {
+
     if (input_buffer != nullptr){
         input_buffer->wait_dequeue(current_batch);
     }
@@ -20,8 +22,8 @@ void Buffers::getBatch() {
 }
 
 void Buffers::sendBatch(EventBatch to_send) {
-    for(auto buffer = output_buffers.begin(), end = output_buffers.end() ; buffer != end; ++buffer) {
-        if(output_buffers.end() == buffer){
+    for(auto *buffer : output_buffers) {
+        if(output_buffers.back() == buffer){
             buffer->enqueue(to_send);
         }
         else{

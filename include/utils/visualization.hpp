@@ -15,21 +15,21 @@
 #include "buffers.hpp"
 #include "types.hpp"
 
-class VisualizationProducer {
-public:
-    VisualizationProducer(int width, int height);
-    void registerBatch(EventBatch *batch);
-    void reset_state();
-    cv::Mat getOutput();
-
-private:
-    int width;
-    int height;
-
-    cv::Mat img;
-    cv::Mat output;
-
-};
+//class VisualizationProducer {
+//public:
+//    VisualizationProducer(int width, int height);
+//    void registerBatch(EventBatch *batch);
+//    void reset_state();
+//    cv::Mat getOutput();
+//
+//private:
+//    int width;
+//    int height;
+//
+//    cv::Mat img;
+//    cv::Mat output;
+//
+//};
 
 class VisualizationController {
 public:
@@ -37,14 +37,30 @@ public:
     Buffers buffers;
     void start();
 
-    VisualizationProducer *prod;
+    cv::Mat getOutput();
+    void resetState();
+
+
+//    VisualizationProducer *prod;
 private:
     int width;
     int height;
 
     Metavision::MTWindow *ui_ptr;
 
+    static void dummyCallback(Metavision::UIKeyEvent key,
+                       int flag,
+                       Metavision::UIAction action,
+                       int flag1);
+
     [[noreturn]] void runtimeLoop();
+
+    float fps = 300;
+    Metavision::timestamp period = 0;
+    Metavision::timestamp next_output_required_at = 0;
+
+    cv::Mat img;
+    cv::Mat output;
 
     boost::thread *thread_ptr;
 };

@@ -11,6 +11,7 @@
 class Buffers {
 public:
     Queue* getOutputBuffer();
+    Queue* getInputBuffer(){return input_buffer;};
     void setInputBuffer(Queue* input){input_buffer = input;};
     void getBatch();
 
@@ -19,7 +20,7 @@ public:
     EventBatch current_batch;
 
     Queue* input_buffer;
-    std::vector<Queue> output_buffers;
+    std::vector<Queue*> output_buffers;
 };
 
 

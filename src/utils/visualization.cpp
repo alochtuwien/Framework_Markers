@@ -9,56 +9,66 @@ VisualizationController::VisualizationController(int width_new, int height_new) 
     height = height_new;
 
     ui_ptr = new Metavision::MTWindow("Active markers", width, height, Metavision::Window::RenderMode::BGR);
-    prod = new VisualizationProducer(width, height);
+//    prod = new VisualizationProducer(width, height);
+    ui_ptr->set_keyboard_callback(dummyCallback);
+    img = cv::Mat::zeros(height, width, CV_8UC1);
+    output = cv::Mat::zeros(height, width, CV_8UC3);
+
+
+    period = (long long)1000000 / fps;
+
 }
 
 [[noreturn]] void VisualizationController::runtimeLoop() {
     int i = 0;
+    bool to_check = false;
     while(true){
 
         buffers.getBatch();
-        if(i%3 == 0) {
-            prod->reset_state();
-            prod->registerBatch(&buffers.current_batch);
-            auto out = prod->getOutput();
-            ui_ptr->show_async(out);
-            i = 0;
+        if (next_output_required_at == 0){
+            next_output_required_at = buffers.current_batch.first->front()->t + period;
+            std::cout << "First ts " << next_output_required_at << std::endl;
         }
-        i++;
+        if (next_output_required_at < buffers.current_batch.first->back()->t){
+            to_check = true;
+        }
 
+        for (const Metavision::Event2d* ev : *buffers.current_batch.first){
+            img.at<uint8_t>(ev->y, ev->x) = 255;
+            if (to_check){
+                if (ev->t > next_output_required_at){
+                    next_output_required_at += period;
+                    to_check=false;
+                    getOutput();
+                    ui_ptr->show_async(output);
+                    resetState();
+                }
+            }
+        }
     }
 }
 
 void VisualizationController::start() {
     if(buffers.input_buffer != nullptr){
-
         thread_ptr = new boost::thread(&VisualizationController::runtimeLoop, this);
     }
 }
 
-VisualizationProducer::VisualizationProducer(int width_new, int height_new) {
-    height = height_new;
-    width = width_new;
-
-    reset_state();
+void VisualizationController::dummyCallback(Metavision::UIKeyEvent key,
+                                            int flag,
+                                            Metavision::UIAction action,
+                                            int flag1) {
+    std::cout << "Pressed key" << std::flush;
 }
 
-void VisualizationProducer::reset_state(){
+cv::Mat VisualizationController::getOutput() {
+    cv::cvtColor(img, output, cv::COLOR_GRAY2BGR);
+}
+
+void VisualizationController::resetState(){
     img = cv::Mat::zeros(height, width, CV_8UC1);
     output = cv::Mat::zeros(height, width, CV_8UC3);
 }
-
-void VisualizationProducer::registerBatch(EventBatch *batch) {
-    for (const Metavision::Event2d* ev : *batch->first){
-        img.at<uint8_t>(ev->y, ev->x) = 255;
-    }
-}
-
-cv::Mat VisualizationProducer::getOutput() {
-    cv::cvtColor(img, output, cv::COLOR_GRAY2BGR);
-    return output;
-}
-
 
 
 

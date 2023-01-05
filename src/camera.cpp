@@ -6,7 +6,7 @@
 
 Camera::Camera(Utils::Options::CameraSetup *setup) {
     if (setup->is_recording){
-        camera_object = Metavision::Camera::from_file(setup->file_path);
+        camera_object = Metavision::Camera::from_file(setup->file_path, true);
     }
     else{
         camera_object = Metavision::Camera::from_first_available();

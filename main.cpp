@@ -4,6 +4,7 @@
 #include "include/camera.hpp"
 #include "include/utils/visualization.hpp"
 #include "include/markers.hpp"
+#include "include/runtime_manager.hpp"
 
 int main(int argc, char *argv[]) {
 
@@ -23,19 +24,19 @@ int main(int argc, char *argv[]) {
 
     MarkersManager markers(parser.current_setup.getMarkerConfig());
 
+    RuntimeManager runtime(markers, &cam);
+    runtime.buffers.setInputBuffer(cam.reader.buffers.getOutputBuffer());
+
     VisualizationController vis(cam.width, cam.height);
     vis.buffers.setInputBuffer(cam.reader.buffers.getOutputBuffer());
 
     cam.start();
     vis.start();
-
-
+    runtime.start();
 
     while (true)
     {
 
     }
-
-
     return 0;
 }
