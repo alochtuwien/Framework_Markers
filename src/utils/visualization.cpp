@@ -34,7 +34,7 @@ VisualizationController::VisualizationController(int width_new, int height_new) 
         }
 
         for (const Metavision::Event2d* ev : *buffers.current_batch.first){
-            img.at<uint8_t>(ev->y, ev->x) = 255;
+            img.at<uint8_t>(ev->y, ev->x) += 1;
             if (to_check){
                 if (ev->t > next_output_required_at){
                     next_output_required_at += period;
