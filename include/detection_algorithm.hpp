@@ -27,7 +27,7 @@ private:
 
     std::vector<cv::Point2f> cluster_centers;
 
-    float fps = 30;
+    float fps = 1000;
     Metavision::timestamp period = 0;
     Metavision::timestamp next_output_required_at = 0;
 

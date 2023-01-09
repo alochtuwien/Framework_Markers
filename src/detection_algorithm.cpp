@@ -42,7 +42,7 @@ void DetectionAlgorithm::Detect(){
     if (nonzero_cnt > 4)
     {
         cluster_centers = cluster(img);
-        std::cout << "found " << cluster_centers.size() << " clusters" << std::endl;
+//        std::cout << "found " << cluster_centers.size() << " clusters" << std::endl;
 
     }
 
@@ -50,6 +50,7 @@ void DetectionAlgorithm::Detect(){
 
 [[noreturn]] void DetectionAlgorithm::runtimeLoop() {
     bool to_check = false;
+    int i = 0;
     while(true){
         buffers.getBatch();
 
@@ -66,11 +67,17 @@ void DetectionAlgorithm::Detect(){
                 if (ev->t > next_output_required_at){
                     next_output_required_at += period;
                     to_check=false;
-                    Detect();
+                    if (i%100 == 0){
+                        imwrite("/home/aloch/dump/png/" + std::to_string(i) + ".png", img);
+                    }
+
+                    i++;
+//                    Detect();
+
                     img = cv::Mat::zeros(camera_height, camera_width, CV_8UC1);
                 }
             }
-            img.at<uint8_t>(ev->y, ev->x) = 255;
+            img.at<uint8_t>(ev->y, ev->x) += 1;
         }
     }
 }

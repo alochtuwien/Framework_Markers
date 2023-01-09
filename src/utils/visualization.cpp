@@ -10,9 +10,15 @@ VisualizationController::VisualizationController(int width_new, int height_new) 
 
     ui_ptr = new Metavision::MTWindow("Active markers", width, height, Metavision::Window::RenderMode::BGR);
 //    prod = new VisualizationProducer(width, height);
-    ui_ptr->set_keyboard_callback(dummyCallback);
+    ui_ptr->set_keyboard_callback([this](Metavision::UIKeyEvent key, int scancode, Metavision::UIAction action, int mods) {
+        if (action == Metavision::UIAction::RELEASE && key == Metavision::UIKeyEvent::KEY_ESCAPE)
+            to_close = true;
+    });
     img = cv::Mat::zeros(height, width, CV_8UC1);
     output = cv::Mat::zeros(height, width, CV_8UC3);
+
+    to_close = false;
+    closed = false;
 
 
     period = (long long)1000000 / fps;
@@ -22,30 +28,39 @@ VisualizationController::VisualizationController(int width_new, int height_new) 
 [[noreturn]] void VisualizationController::runtimeLoop() {
     int i = 0;
     bool to_check = false;
-    while(true){
+    while(!to_close.load()){
 
-        buffers.getBatch();
-        if (next_output_required_at == 0){
-            next_output_required_at = buffers.current_batch.first->front()->t + period;
-            std::cout << "First ts " << next_output_required_at << std::endl;
-        }
-        if (next_output_required_at < buffers.current_batch.first->back()->t){
-            to_check = true;
-        }
+        if (buffers.getBatch()){
+            if (next_output_required_at == 0){
+                next_output_required_at = buffers.current_batch.first->front()->t + period;
+                std::cout << "First ts " << next_output_required_at << std::endl;
+            }
+            if (next_output_required_at < buffers.current_batch.first->back()->t){
+                to_check = true;
+            }
 
-        for (const Metavision::Event2d* ev : *buffers.current_batch.first){
-            img.at<uint8_t>(ev->y, ev->x) += 1;
-            if (to_check){
-                if (ev->t > next_output_required_at){
-                    next_output_required_at += period;
-                    to_check=false;
-                    getOutput();
-                    ui_ptr->show_async(output);
-                    resetState();
+            for (const Metavision::Event2d* ev : *buffers.current_batch.first){
+                img.at<uint8_t>(ev->y, ev->x) += 1;
+                if (to_check){
+                    if (ev->t > next_output_required_at){
+                        next_output_required_at += period;
+                        to_check=false;
+                        getOutput();
+                        ui_ptr->show_async(output);
+                        Metavision::EventLoop::poll_and_dispatch();
+                        resetState();
+                    }
                 }
             }
         }
+        else {
+            ui_ptr->set_close_flag();
+            closed = true;
+            to_close = true;
+        }
     }
+    ui_ptr->set_close_flag();
+    closed = true;
 }
 
 void VisualizationController::start() {
@@ -54,14 +69,8 @@ void VisualizationController::start() {
     }
 }
 
-void VisualizationController::dummyCallback(Metavision::UIKeyEvent key,
-                                            int flag,
-                                            Metavision::UIAction action,
-                                            int flag1) {
-    std::cout << "Pressed key" << std::flush;
-}
 
-cv::Mat VisualizationController::getOutput() {
+void VisualizationController::getOutput() {
     cv::cvtColor(img, output, cv::COLOR_GRAY2BGR);
 }
 
@@ -69,6 +78,11 @@ void VisualizationController::resetState(){
     img = cv::Mat::zeros(height, width, CV_8UC1);
     output = cv::Mat::zeros(height, width, CV_8UC3);
 }
+
+bool VisualizationController::isFinished() {
+    return closed.load();
+}
+
 
 
 

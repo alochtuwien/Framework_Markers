@@ -34,9 +34,9 @@ int main(int argc, char *argv[]) {
     vis.start();
     runtime.start();
 
-    while (true)
-    {
-
+    while (!vis.isFinished()) {
+        sleep(0.01);
     }
+
     return 0;
 }

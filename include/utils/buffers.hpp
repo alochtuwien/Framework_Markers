@@ -6,6 +6,7 @@
 #define FRAMEWORK_MARKERS_BUFFERS_HPP
 
 #include "types.hpp"
+#include <chrono>
 #define QUEUE_SIZE 1024
 
 class Buffers {
@@ -13,7 +14,7 @@ public:
     Queue* getOutputBuffer();
     Queue* getInputBuffer(){return input_buffer;};
     void setInputBuffer(Queue* input){input_buffer = input;};
-    void getBatch();
+    bool getBatch();
 
     void sendBatch(EventBatch batch);
 

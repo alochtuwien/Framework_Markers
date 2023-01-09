@@ -7,8 +7,10 @@
 
 #include <metavision/sdk/ui/utils/mt_window.h>
 #include <metavision/sdk/ui/utils/window.h>
+#include <metavision/sdk/ui/utils/event_loop.h>
 
 #include <boost/thread.hpp>
+#include <atomic>
 
 #include <opencv2/opencv.hpp>
 
@@ -37,8 +39,10 @@ public:
     Buffers buffers;
     void start();
 
-    cv::Mat getOutput();
+    void getOutput();
     void resetState();
+
+    bool isFinished();
 
 
 //    VisualizationProducer *prod;
@@ -46,16 +50,16 @@ private:
     int width;
     int height;
 
+    std::atomic<bool> to_close;
+    std::atomic<bool> closed;
+
     Metavision::MTWindow *ui_ptr;
 
-    static void dummyCallback(Metavision::UIKeyEvent key,
-                       int flag,
-                       Metavision::UIAction action,
-                       int flag1);
+
 
     [[noreturn]] void runtimeLoop();
 
-    float fps = 300;
+    float fps = 30;
     Metavision::timestamp period = 0;
     Metavision::timestamp next_output_required_at = 0;
 

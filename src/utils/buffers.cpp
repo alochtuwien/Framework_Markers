@@ -11,10 +11,10 @@ Queue* Buffers::getOutputBuffer() {
     return tmp;
 }
 
-void Buffers::getBatch() {
+bool Buffers::getBatch() {
 
     if (input_buffer != nullptr){
-        input_buffer->wait_dequeue(current_batch);
+        return input_buffer->wait_dequeue_timed(current_batch, std::chrono::milliseconds(5));
     }
     else{
         throw "Trying to read from buffer without initializing input buffer";
