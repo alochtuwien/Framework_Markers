@@ -11,6 +11,8 @@
 
 #include <boost/thread.hpp>
 #include <atomic>
+#include <chrono>
+#include <unistd.h>
 
 #include <opencv2/opencv.hpp>
 
@@ -53,6 +55,7 @@ private:
     std::atomic<bool> to_close;
     std::atomic<bool> closed;
 
+
     Metavision::MTWindow *ui_ptr;
 
 
@@ -60,10 +63,18 @@ private:
     [[noreturn]] void runtimeLoop();
 
     float fps = 30;
+    float accumulation_fps = 1000;
+
     Metavision::timestamp period = 0;
+    Metavision::timestamp accumulation_period = 0;
+
     Metavision::timestamp next_output_required_at = 0;
 
+    int cutoff = 0;
+    int min_freq = 7000;
+
     cv::Mat img;
+    cv::Mat counts;
     cv::Mat output;
 
     boost::thread *thread_ptr;

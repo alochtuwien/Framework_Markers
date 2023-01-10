@@ -68,7 +68,7 @@ void DetectionAlgorithm::Detect(){
                     next_output_required_at += period;
                     to_check=false;
                     if (i%100 == 0){
-                        imwrite("/home/aloch/dump/png/" + std::to_string(i) + ".png", img);
+//                        imwrite("/home/aloch/dump/png/" + std::to_string(i) + ".png", img);
                     }
 
                     i++;
